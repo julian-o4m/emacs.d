@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: o4m_multiple_question
+# key: o4m_multiple
+# --
+$1: {
+  type: 'multiple',
+  text: '$2',
+  answerGroups: [  
+  ],
+  summaryTemplate: '$3: \${summary}',
+},

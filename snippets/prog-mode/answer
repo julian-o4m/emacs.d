@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: answer
+# key: ans
+# --
+{ key: '$1', text: '$2', summary: '$3' }

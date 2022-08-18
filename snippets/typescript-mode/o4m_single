@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: single_question
+# key: o4m_single
+# --
+$1: {
+    type: 'single',
+    text: '$2',
+    answers: [
+    $3
+    ],
+    summaryTemplate: '$4\${summary}',
+}
