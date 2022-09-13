@@ -26,29 +26,56 @@
 
 
 ;; These all work together somehow ? ===========================================
-(use-package company
-  :diminish company-mode global-company-mode
-  :init (add-hook 'after-init-hook 'global-company-mode))
+;; (use-package company
+;;   :diminish company-mode global-company-mode
+;;   :init (add-hook 'after-init-hook 'global-company-mode))
 
-(use-package counsel
-  :bind (("M-x" . counsel-M-x)
-         ("C-x C-f" . counsel-find-file)
-         ("C-x 8 C-<return>" . counsel-unicode-char)))
+;; (use-package counsel
+;;   :bind (("M-x" . counsel-M-x)
+;;          ("C-x C-f" . counsel-find-file)
+;;          ("C-x 8 C-<return>" . counsel-unicode-char)))
 
-(use-package smex)
-(use-package diminish); Hide minor modes in modeline
-(use-package delight); Change mode string in modeline
+;; (use-package smex)
+;; (use-package diminish); Hide minor modes in modeline
+;; (use-package delight); Change mode string in modeline
 
-(use-package ivy :diminish ivy-mode
-  :config
-  (progn
-    (ivy-mode 1)
-    (setq ivy-use-virtual-buffers t)
-    (setq ivy-initial-inputs-alist nil)
-    (setq ivy-re-builders-alist
-          '((t  .  ivy--regex-ignore-order)))
-    (setq ivy-count-format "%d/%d ")))
+;; (use-package ivy :diminish ivy-mode
+;;   :config
+;;   (progn
+;;     (ivy-mode 1)
+;;     (setq ivy-use-virtual-buffers t)
+;;     (setq ivy-initial-inputs-alist nil)
+;;     (setq ivy-re-builders-alist
+;;           '((t  .  ivy--regex-ignore-order)))
+;;     (setq ivy-count-format "%d/%d ")))
 
+(use-package vertico
+  :init (vertico-mode)
+  :custom (vertico-cycle t))
+
+(use-package savehist
+  :init
+  (savehist-mode))
+
+(use-package marginalia
+  :after vertico
+  :custom
+  (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
+  :init
+  (marginalia-mode))
+
+(use-package all-the-icons)
+
+(use-package all-the-icons-completion
+  :after (marginalia all-the-icons)
+  :hook (marginalia-mode . all-the-icons-completion-marginalia-setup)
+  :init
+  (all-the-icons-completion-mode))
+
+(use-package orderless
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion)))))
 ;; ============================================================================
 
 (use-package emmet-mode
@@ -96,6 +123,9 @@
          ("s-g b" . magit-blame))
   :config (setq magit-display-buffer-function #'magit-display-buffer-traditional))
 
+(use-package multiple-cursors
+  :bind (("C-c m" . mc/edit-lines)))
+
 ;; Org mode ===================================================================
 (use-package org
   :hook ((org-mode . auto-fill-mode)
@@ -119,7 +149,7 @@
                                     ("CANCELLED" . "gray") ("DONE" . "DodgerBlue"))
            org-agenda-files (list "~/org/STANDUP.org")
            org-format-latex-options (plist-put org-format-latex-options :scale 3.0)
-           org-capture-templates '(("t" "Todo" entry (file+headline "~/org/STANDUP.org" "Days")
+           org-capture-templates '(("t" "Today" entry (file+headline "~/org/STANDUP.org" "Days")
                                     "*** %t\n**** Today\n**** NOTES\n**** TIL\n**** New Problems"))))
 
 (use-package org-bullets :config (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
@@ -228,10 +258,16 @@
           web-mode) . lsp)
   :hook (lsp-mode . (lambda () (lsp-enable-which-key-integration)))
   :config
+  (global-eldoc-mode -1)
   (setq lsp-disabled-clients '(eslint)))
 
 (use-package lsp-ui
-  :hook (lsp-mode . lsp-ui-mode))
+  :hook (lsp-mode . lsp-ui-mode)
+  :config
+  (setq
+   lsp-ui-sideline-show-diagnostics t
+   lsp-ui-sideline-show-hover t
+   lsp-ui-sideline-show-code-actions t))
 
 
 
