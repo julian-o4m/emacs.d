@@ -6,6 +6,19 @@
     (set-face-foreground 'font-lock-comment-face comment-color)
     (set-face-foreground 'font-lock-comment-delimiter-face comment-color)))
 
+(use-package emojify
+  :bind (("C-x ." . emojify-insert-emoji))
+  :config (setq emojify-display-style 'unicode
+                emojify-emoji-styles '(github unicode))
+  (global-emojify-mode 1))
+
+;; (use-package moe-theme
+;;   :config
+;;   (load-theme 'moe-dark)
+;;   (let ((comment-color "#799"))
+;;     (set-face-foreground 'font-lock-comment-face comment-color)
+;;     (set-face-foreground 'font-lock-comment-delimiter-face comment-color)))
+
 
 ;; We're reaaaaally gonna use ace-window this time!!!
 (use-package ace-window
@@ -22,8 +35,15 @@
   :bind (("C-'" . avy-goto-char-timer)
          (:map isearch-mode-map ("C-'" . avy-isearch))))
 
+(use-package perspective
+  :bind (("C-x C-b" . persp-ibuffer))
+  :custom (persp-mode-prefix-key (kbd "s-b"))
+  :config
+  (persp-mode 1))
+
 (use-package beacon :init (beacon-mode) :diminish "")
 
+(use-package browse-kill-ring :bind (("C-M-Y" . browse-kill-ring)))
 
 ;; These all work together somehow ? ===========================================
 ;; (use-package company
@@ -150,9 +170,16 @@
            org-agenda-files (list "~/org/STANDUP.org")
            org-format-latex-options (plist-put org-format-latex-options :scale 3.0)
            org-capture-templates '(("t" "Today" entry (file+headline "~/org/STANDUP.org" "Days")
-                                    "*** %t\n**** Today\n**** NOTES\n**** TIL\n**** New Problems"))))
+                                    "*** %t\n**** Today\n**** NOTES\n**** TIL\n**** New Problems")))
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((dot . t))))
+
+(use-package graphviz-dot-mode)
 
 (use-package org-bullets :config (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+
+
 
 (set-face-foreground 'org-verbatim "#888")
 (set-face-foreground 'org-block "#888")
@@ -182,14 +209,15 @@
 
 (use-package projectile
   :diminish projectile-mode
-  :config (projectile-mode t)
   :bind (:map projectile-mode-map
-              ("s-p" .  'projectile-command-map)))
+              ("s-p" .  'projectile-command-map))
+  :config (projectile-mode t)
+  (setq projectile-switch-project-action #'magit))
 
-(use-package counsel-projectile
-  :diminish counsel-projectile-mode
-  :config (counsel-projectile-mode t)
-  (setq counsel-projectile-switch-project-action 'counsel-projectile-switch-project-action-dired))
+;; (use-package counsel-projectile
+;;   :diminish counsel-projectile-mode
+;;   :config (counsel-projectile-mode t)
+;;   (setq counsel-projectile-switch-project-action 'counsel-projectile-switch-project-action-dired))
 
 
 (use-package rainbow-delimiters :diminish ""
@@ -259,7 +287,9 @@
   :hook (lsp-mode . (lambda () (lsp-enable-which-key-integration)))
   :config
   (global-eldoc-mode -1)
-  (setq lsp-disabled-clients '(eslint)))
+  (setq lsp-disabled-clients '(eslint))
+  (setq read-process-output-max (* 4 1024 1024)) ;; 4mb
+)
 
 (use-package lsp-ui
   :hook (lsp-mode . lsp-ui-mode)
@@ -291,7 +321,8 @@
   (setq treemacs-width 45))
 
 (use-package yasnippet
-  :config (yas-global-mode 1))
+  :config (yas-global-mode 1)
+  (setq yas-triggers-in-field t))
 
 (use-package yasnippet-snippets)
 (use-package npm)
